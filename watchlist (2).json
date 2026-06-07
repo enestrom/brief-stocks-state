@@ -1,0 +1,11 @@
+{
+  "_comment": "Editá esta lista para agregar o sacar acciones. Solo cambiá el array 'tickers'. El workflow lee este archivo en cada corrida.",
+  "tickers": [
+    { "symbol": "ASML", "name": "ASML Holding",        "tema": "Semis - litografía" },
+    { "symbol": "AMAT", "name": "Applied Materials",   "tema": "Semis - equipamiento" },
+    { "symbol": "TSM",  "name": "TSMC",                "tema": "Semis - fundición" },
+    { "symbol": "INTC", "name": "Intel",               "tema": "Semis - chips" },
+    { "symbol": "ARM",  "name": "Arm Holdings",        "tema": "Semis - diseño/IP" },
+    { "symbol": "ANET", "name": "Arista Networks",     "tema": "Datacenter - networking" }
+  ]
+}
