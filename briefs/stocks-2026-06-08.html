@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brief Stocks · 8 jun 2026</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1c232d; --line:#2a3340;
+    --ink:#e6edf3; --muted:#8b98a8; --faint:#5a6675;
+    --accent:#39d98a; --accent-dim:#1f7a52;
+    --red:#ff6b6b; --amber:#ffb454; --blue:#58a6ff; --violet:#a371f7;
+    --chip:#222c38;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.5;padding:16px;max-width:780px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  header{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:8px}
+  h1{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  h1 .z{color:var(--accent)}
+  .date{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .intro{font-size:12px;color:var(--muted);margin-bottom:20px}
+
+  .stock{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    margin-bottom:18px;overflow:hidden}
+  .s-head{display:flex;justify-content:space-between;align-items:flex-start;
+    padding:16px 18px 14px;border-bottom:1px solid var(--panel-2);
+    background:linear-gradient(180deg,var(--panel-2),transparent)}
+  .s-id .tkr{font-size:20px;font-weight:700;letter-spacing:-.5px}
+  .s-id .name{font-size:12px;color:var(--muted);margin-top:1px}
+  .s-id .sector{font-family:var(--mono);font-size:10px;color:var(--faint);
+    text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+  .s-px{text-align:right}
+  .s-px .price{font-family:var(--mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+  .s-px .chg{font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px}
+  .up{color:var(--accent)} .down{color:var(--red)} .flat{color:var(--muted)}
+
+  .earn-badge{display:inline-block;font-family:var(--mono);font-size:10px;
+    padding:3px 9px;border-radius:20px;margin-top:8px;letter-spacing:.3px}
+  .earn-soon{background:rgba(255,180,84,.15);color:var(--amber);border:1px solid rgba(255,180,84,.3)}
+  .earn-far{background:var(--chip);color:var(--muted)}
+
+  .blocks{padding:6px 18px 14px}
+  .block{padding:13px 0;border-bottom:1px solid var(--panel-2)}
+  .block:last-child{border-bottom:none}
+  .block-q{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;color:var(--faint);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+  .block-q::before{content:"";width:3px;height:11px;background:var(--accent-dim);border-radius:2px}
+
+  .metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 16px}
+  .metric{display:flex;flex-direction:column}
+  .m-label{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+  .m-val{font-family:var(--mono);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:1px}
+  .m-val.empty{color:var(--faint);font-weight:400}
+  .m-ctx{font-size:9.5px;font-family:var(--mono);margin-top:1px}
+  .ctx-hi{color:var(--amber)} .ctx-lo{color:var(--blue)} .ctx-mid{color:var(--faint)}
+
+  .tip{position:relative;cursor:help;color:var(--faint);font-size:9px;
+    border:1px solid var(--faint);border-radius:50%;width:12px;height:12px;
+    display:inline-flex;align-items:center;justify-content:center;line-height:1}
+  .tip:hover .tip-box,.tip:active .tip-box{display:block}
+  .tip-box{display:none;position:absolute;bottom:140%;left:50%;transform:translateX(-50%);
+    background:#000;color:var(--ink);font-family:var(--sans);font-size:11px;font-weight:400;
+    padding:7px 10px;border-radius:7px;width:185px;z-index:10;line-height:1.4;
+    box-shadow:0 4px 14px rgba(0,0,0,.5);border:1px solid var(--line)}
+
+  .range{grid-column:1/-1;margin-top:2px}
+  .range-bar{height:5px;background:var(--panel-2);border-radius:3px;position:relative;margin-top:7px}
+  .range-fill{position:absolute;height:100%;background:linear-gradient(90deg,var(--red),var(--amber),var(--accent));border-radius:3px;opacity:.35}
+  .range-dot{position:absolute;top:50%;width:9px;height:9px;background:var(--ink);
+    border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--bg)}
+  .range-lbl{display:flex;justify-content:space-between;font-family:var(--mono);
+    font-size:9px;color:var(--faint);margin-top:5px}
+
+  .pos{background:var(--panel-2);border-radius:9px;padding:11px 13px;margin-top:4px}
+  .pos-h{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin-bottom:7px}
+
+  .thesis{grid-column:1/-1;background:rgba(163,113,247,.08);border:1px solid rgba(163,113,247,.2);
+    border-radius:9px;padding:10px 12px;margin-top:4px;font-size:12px;font-style:italic;color:#cdb4f5}
+  .thesis-h{font-family:var(--mono);font-size:9px;font-style:normal;text-transform:uppercase;
+    letter-spacing:.6px;color:var(--violet);margin-bottom:4px}
+
+  .news{padding:13px 0 2px}
+  .news-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--panel-2)}
+  .news-item:last-child{border-bottom:none}
+  .ntype{flex-shrink:0;font-family:var(--mono);font-size:9px;padding:3px 7px;border-radius:5px;
+    text-transform:uppercase;letter-spacing:.3px;height:fit-content;font-weight:600}
+  .nt-earn{background:rgba(57,217,138,.15);color:var(--accent)}
+  .nt-guide{background:rgba(88,166,255,.15);color:var(--blue)}
+  .nt-ma{background:rgba(163,113,247,.15);color:var(--violet)}
+  .nt-prod{background:rgba(255,180,84,.15);color:var(--amber)}
+  .nt-mgmt{background:rgba(139,152,168,.15);color:var(--muted)}
+  .nt-reg{background:rgba(255,107,107,.15);color:var(--red)}
+  .nt-rating{background:rgba(88,166,255,.12);color:var(--blue)}
+  .nt-macro{background:var(--chip);color:var(--muted)}
+  .news-body{flex:1}
+  .news-txt{font-size:13px}.news-txt b{color:#fff}
+  .news-meta{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:3px}
+  .no-news{font-size:12px;color:var(--faint);font-style:italic;padding:10px 0}
+
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:16px 18px;margin-bottom:18px}
+  .summary-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;color:var(--accent);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+  .summary-h::before{content:"";width:3px;height:11px;background:var(--accent);border-radius:2px}
+  .summary ul{list-style:none}
+  .summary li{font-size:13px;padding:6px 0 6px 18px;position:relative;border-bottom:1px solid var(--panel-2)}
+  .summary li:last-child{border-bottom:none}
+  .summary li::before{content:"▸";position:absolute;left:0;color:var(--accent-dim);font-size:11px;top:7px}
+  .summary li b{color:#fff}
+
+  .exec{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:22px;align-items:start}
+  @media(max-width:680px){.exec{grid-template-columns:1fr}}
+
+  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .panel-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+    color:var(--muted);padding:13px 16px 10px;border-bottom:1px solid var(--panel-2)}
+
+  table.stats{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.stats th{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--faint);text-align:right;padding:9px 12px 7px;font-weight:500;border-bottom:1px solid var(--panel-2)}
+  table.stats th:first-child{text-align:left}
+  table.stats td{font-family:var(--mono);font-size:12px;padding:9px 12px;border-bottom:1px solid var(--panel-2);text-align:right}
+  table.stats tr:last-child td{border-bottom:none}
+  table.stats td:first-child{text-align:left;font-weight:700;font-size:13px;letter-spacing:-.3px}
+  table.stats tr:hover{background:var(--panel-2)}
+
+  .topnews{padding:4px 14px 10px}
+  .topnews .news-item{padding:9px 0}
+  .topnews .news-txt{font-size:12px;line-height:1.4}
+
+  footer{font-size:10.5px;color:var(--faint);font-family:var(--mono);line-height:1.7;border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Brief <span class="z">Stocks</span></h1>
+  <span class="date">8 jun 2026 · cierre 6 jun</span>
+</header>
+<div class="intro">Seguimiento por acción, ordenado por pregunta de inversión: qué es → cara o barata → crece → es rentable → es sana → qué pasa.</div>
+
+<div class="summary">
+  <div class="summary-h">Lo importante hoy</div>
+  <ul>
+    <li>Brutal <b>selloff de semis</b>: el índice PHLX cayó <b>10,3%</b> (su peor día desde marzo 2020) tras el guidance flojo de <b>Broadcom</b> en chips AI a medida; los chipmakers de EE.UU. perdieron ~<b>US$1,3 billones</b> de valor en un día.</li>
+    <li>Disparadores combinados: <b>guidance de Broadcom</b> + un dato de empleo fuerte en EE.UU. que reavivó el miedo a tasas más altas, castigando a las acciones de múltiplo elevado.</li>
+    <li><b>ASML</b> entra en la conversación de <b>Terafab</b>, la fab de US$55B+ (hasta US$119B) de SpaceX-Tesla: Musk participa de su conferencia interna y el CEO Fouquet lo califica de proyecto "muy serio".</li>
+    <li>Toda la watchlist cerró en rojo profundo (<b>INTC −11,3%</b>, <b>ARM −12,8%</b>); para muchos, los fundamentales de pedidos no cambiaron — fue reset de sentimiento sobre el gasto en IA.</li>
+  </ul>
+</div>
+
+<div class="exec">
+  <div class="panel-box">
+    <div class="panel-h">Mercado de un vistazo</div>
+    <table class="stats">
+      <thead>
+        <tr><th>Ticker</th><th>Precio</th><th>Día %</th><th>Volumen</th><th>Market cap</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ASML</td><td>€1.641,74</td><td class="down">−6,6%</td><td>—</td><td>€558,5B</td></tr>
+        <tr><td>AMAT</td><td>$453,01</td><td class="down">−9,7%</td><td>—</td><td>$359,7B</td></tr>
+        <tr><td>TSM</td><td>NT$415,17</td><td class="down">−6,7%</td><td>—</td><td>NT$61,3T</td></tr>
+        <tr><td>INTC</td><td>$99,17</td><td class="down">−11,3%</td><td>—</td><td>$498,4B</td></tr>
+        <tr><td>ARM</td><td>$342,93</td><td class="down">−12,8%</td><td>—</td><td>$364,9B</td></tr>
+        <tr><td>ANET</td><td>$154,27</td><td class="down">−7,1%</td><td>—</td><td>$194,3B</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="panel-box">
+    <div class="panel-h">Top 3 noticias</div>
+    <div class="topnews">
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt"><b>Selloff de semis</b>: el PHLX cayó 10,3% y se borraron ~US$1,3B de cap. tras el guidance de Broadcom y datos de empleo fuertes.</div><div class="news-meta">Reuters · 5/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-ma">Corporativo</span><div class="news-body"><div class="news-txt"><b>ASML</b> entra en órbita de Terafab: Musk presenta su fab de US$55B+ a empleados de ASML; Fouquet lo llama "muy serio".</div><div class="news-meta">Reuters / Bloomberg · 6/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-rating">Analistas</span><div class="news-body"><div class="news-txt"><b>ARM</b>: Mizuho sube target a US$500 (desde US$425) por el impulso de la "agentic AI" y nuevos clientes (Oracle, ByteDance).</div><div class="news-meta">TipRanks · 4/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">ASML</div>
+      <div class="name">ASML Holding NV</div>
+      <div class="sector">Semis · Litografía</div>
+    </div>
+    <div class="s-px">
+      <div class="price">€1.641,74</div>
+      <div class="chg down">−6,6% &nbsp;−€115,73</div>
+      <div class="earn-badge earn-far">Reporta: 15/jul</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">€558,5B</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val">0,45%</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:100%"></div><div class="range-dot" style="left:100%"></div></div><div class="range-lbl"><span>€587,8</span><span>hoy €1.641,7</span><span>€1.499</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val">56,0</span><span class="m-ctx ctx-hi">alto vs. su historia</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+15,6%</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val">31,3%</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val">€26,26</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="news-item"><span class="ntype nt-ma">Corporativo</span><div class="news-body"><div class="news-txt"><b>Musk presenta Terafab a empleados de ASML.</b> El CEO Fouquet lo llama proyecto "muy serio"; sería un pipeline potencial de pedidos de equipos multimillonario, ya que ASML es el único proveedor de litografía EUV.</div><div class="news-meta">Reuters / Bloomberg · 6/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt">Cayó 6,6% arrastrada por el selloff sectorial tras Broadcom; según analistas, sus pedidos y guidance no cambiaron — fue reset de sentimiento.</div><div class="news-meta">ts2.tech / Reuters · 5-6/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">AMAT</div>
+      <div class="name">Applied Materials Inc</div>
+      <div class="sector">Semis · Equipamiento</div>
+    </div>
+    <div class="s-px">
+      <div class="price">$453,01</div>
+      <div class="chg down">−9,7% &nbsp;−$48,69</div>
+      <div class="earn-badge earn-far">Sin fecha confirmada</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">$359,7B</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val">0,41%</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:84%"></div><div class="range-dot" style="left:84%"></div></div><div class="range-lbl"><span>$154,5</span><span>hoy $453</span><span>$510,8</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val">42,3</span><span class="m-ctx ctx-hi">alto vs. su historia</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+3,3%</span><span class="m-ctx ctx-lo">bajo vs. sus pares</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val">29,3%</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val">$10,64</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt">Entre las mayores caídas del día (−9,7%): los fabricantes de equipos como AMAT, KLA y Lam fueron golpeados de lleno en el selloff sectorial post-Broadcom.</div><div class="news-meta">Kavout · 5/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">TSM</div>
+      <div class="name">Taiwan Semiconductor Manufacturing</div>
+      <div class="sector">Semis · Fundición</div>
+    </div>
+    <div class="s-px">
+      <div class="price">NT$415,17</div>
+      <div class="chg down">−6,7% &nbsp;−NT$29,75</div>
+      <div class="earn-badge earn-far">Sin fecha confirmada</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">NT$61,3T</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val">0,80%</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:0%"></div><div class="range-dot" style="left:0%"></div></div><div class="range-lbl"><span>NT$946</span><span>hoy NT$415</span><span>NT$2.440</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val">32,1</span><span class="m-ctx ctx-hi">alto vs. su historia</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+30,7%</span><span class="m-ctx ctx-hi">fuerte por demanda IA</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val">47,0%</span><span class="m-ctx ctx-hi">muy alto</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val">NT$74,38</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt">Cayó 6,7% en el selloff sectorial; pese a la volatilidad, sus metas de crecimiento agresivas y la fuerte demanda de chips IA la mantienen mejor posicionada que pares.</div><div class="news-meta">Yahoo Finance · 5/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-mgmt">Management</span><div class="news-body"><div class="news-txt">Los accionistas aprobaron los resultados 2025 y cambios en el estatuto en la asamblea del 4/jun.</div><div class="news-meta">TipRanks · 4/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">INTC</div>
+      <div class="name">Intel Corp</div>
+      <div class="sector">Semis · Chips</div>
+    </div>
+    <div class="s-px">
+      <div class="price">$99,17</div>
+      <div class="chg down">−11,3% &nbsp;−$12,61</div>
+      <div class="earn-badge earn-far">Sin fecha confirmada</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">$498,4B</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val">0,00%</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:70%"></div><div class="range-dot" style="left:70%"></div></div><div class="range-lbl"><span>$18,97</span><span>hoy $99,17</span><span>$132,75</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val empty">— (pérdidas)</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+1,4%</span><span class="m-ctx ctx-lo">casi plano</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val down">−5,9%</span><span class="m-ctx ctx-lo">en rojo</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val down">−$0,63</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt">La peor caída de la watchlist (−11,3%): tras subir fuerte en el año, sufrió toma de ganancias y "buyer exhaustion" en el selloff sectorial.</div><div class="news-meta">Kavout · 5/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-prod">Producto</span><div class="news-body"><div class="news-txt">Fouquet (ASML) señaló que espera que Intel esté entre los primeros adoptantes de sus equipos High-NA EUV, con los primeros chips lógicos en "meses".</div><div class="news-meta">Reuters · 6/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">ARM</div>
+      <div class="name">Arm Holdings PLC</div>
+      <div class="sector">Semis · Diseño / IP</div>
+    </div>
+    <div class="s-px">
+      <div class="price">$342,93</div>
+      <div class="chg down">−12,8% &nbsp;−$50,51</div>
+      <div class="earn-badge earn-far">Sin fecha confirmada</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">$364,9B</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:74%"></div><div class="range-dot" style="left:74%"></div></div><div class="range-lbl"><span>$100,0</span><span>hoy $342,9</span><span>$428,0</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val">463,1</span><span class="m-ctx ctx-hi">extremadamente alto</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+22,8%</span><span class="m-ctx ctx-hi">fuerte</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val">18,4%</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val">$0,85</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="news-item"><span class="ntype nt-rating">Analistas</span><div class="news-body"><div class="news-txt"><b>Mizuho subió su target a $500</b> (desde $425), citando el impulso de la "agentic AI" y nuevos clientes de su plataforma AGI CPU (Oracle, ByteDance).</div><div class="news-meta">TipRanks · 4/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-mgmt">Management</span><div class="news-body"><div class="news-txt">La Chief Accounting Officer vendió 11.306 acciones por ~$4,4M; con la acción +277% en el año, el insider sale llamó la atención.</div><div class="news-meta">TipRanks / Investing.com · 4/jun</div></div></div>
+      <div class="news-item"><span class="ntype nt-macro">Macro</span><div class="news-body"><div class="news-txt">La caída más fuerte de la watchlist (−12,8%): como nombre de momentum y múltiplo altísimo, amplificó el selloff sectorial.</div><div class="news-meta">CNBC / Yahoo · 5/jun</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="stock">
+  <div class="s-head">
+    <div class="s-id">
+      <div class="tkr">ANET</div>
+      <div class="name">Arista Networks Inc</div>
+      <div class="sector">Datacenter · Networking</div>
+    </div>
+    <div class="s-px">
+      <div class="price">$154,27</div>
+      <div class="chg down">−7,1% &nbsp;−$11,74</div>
+      <div class="earn-badge earn-far">Sin fecha confirmada</div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block">
+      <div class="block-q">¿Qué es y qué tan grande es?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Market cap <span class="tip">?<span class="tip-box">Valor total en bolsa = precio × acciones.</span></span></span><span class="m-val">$194,3B</span></div>
+        <div class="metric"><span class="m-label">Volumen <span class="tip">?<span class="tip-box">Acciones operadas hoy; alto = más interés.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Beta <span class="tip">?<span class="tip-box">Cuánto se mueve vs. el mercado.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Dividend yield <span class="tip">?<span class="tip-box">% anual en dividendos sobre el precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric range"><span class="m-label">Rango 52 semanas <span class="tip">?<span class="tip-box">Precio del último año.</span></span></span><div class="range-bar"><div class="range-fill" style="width:73%"></div><div class="range-dot" style="left:73%"></div></div><div class="range-lbl"><span>$85,58</span><span>hoy $154,3</span><span>$179,8</span></div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Está cara o barata?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">P/E trailing <span class="tip">?<span class="tip-box">Cuánto pagás por cada $1 de ganancia.</span></span></span><span class="m-val">52,2</span><span class="m-ctx ctx-hi">alto vs. su historia</span></div>
+        <div class="metric"><span class="m-label">P/E forward <span class="tip">?<span class="tip-box">P/E sobre ganancias estimadas.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">PEG <span class="tip">?<span class="tip-box">P/E ajustado por crecimiento; &lt;1 buen precio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">EV/EBITDA <span class="tip">?<span class="tip-box">Valuación que ignora deuda e impuestos.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Crece?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Ingresos YoY <span class="tip">?<span class="tip-box">Crecimiento de ventas vs. año anterior.</span></span></span><span class="m-val up">+30,6%</span><span class="m-ctx ctx-hi">fuerte por datacenter</span></div>
+        <div class="metric"><span class="m-label">EPS YoY <span class="tip">?<span class="tip-box">Crecimiento de ganancia por acción.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Gana plata de verdad?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Margen neto <span class="tip">?<span class="tip-box">De cada $100 de ventas, cuánto queda.</span></span></span><span class="m-val">38,3%</span><span class="m-ctx ctx-hi">muy alto</span></div>
+        <div class="metric"><span class="m-label">EPS <span class="tip">?<span class="tip-box">Ganancia neta / nº de acciones.</span></span></span><span class="m-val">$2,92</span></div>
+        <div class="metric"><span class="m-label">ROIC <span class="tip">?<span class="tip-box">Retorno sobre capital invertido; calidad del negocio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Margen operativo <span class="tip">?<span class="tip-box">Rentabilidad del negocio principal.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="block-q">¿Es financieramente sana?</div>
+      <div class="metrics">
+        <div class="metric"><span class="m-label">Deuda/Equity <span class="tip">?<span class="tip-box">Deuda vs. capital propio.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Free cash flow <span class="tip">?<span class="tip-box">Caja real tras inversiones.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Current ratio <span class="tip">?<span class="tip-box">Activos vs. pasivos de corto plazo.</span></span></span><span class="m-val empty">—</span></div>
+        <div class="metric"><span class="m-label">Cash vs. deuda <span class="tip">?<span class="tip-box">Liquidez disponible frente a deuda.</span></span></span><span class="m-val empty">—</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="blocks">
+    <div class="block-q">¿Qué está pasando?</div>
+    <div class="news">
+      <div class="no-news">Sin novedades materiales hoy. Cayó 7,1% arrastrada por el selloff sectorial de semis y datacenter, sin catalizador propio.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Números: Financial Modeling Prep · cierre más reciente.<br>
+  Noticias vía web · etiquetadas por tipo de catalizador.<br>
+  Proyecto personal. No es recomendación financiera.
+</footer>
+
+</body>
+</html>
