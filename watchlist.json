@@ -6,6 +6,7 @@
     { "symbol": "TSM",  "name": "TSMC",                "tema": "Semis - fundición" },
     { "symbol": "INTC", "name": "Intel",               "tema": "Semis - chips" },
     { "symbol": "ARM",  "name": "Arm Holdings",        "tema": "Semis - diseño/IP" },
-    { "symbol": "ANET", "name": "Arista Networks",     "tema": "Datacenter - networking" }
+    { "symbol": "ANET", "name": "Arista Networks",     "tema": "Datacenter - networking" },
+    { "symbol": "NVDA", "name": "NVIDIA",              "tema": "Chips" }
   ]
 }
