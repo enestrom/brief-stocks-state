@@ -36,9 +36,6 @@
   .summary li::before{content:"\25B8";position:absolute;left:0;font-size:11px;top:7px;color:var(--faint)}
   .summary li b{color:#fff}
 
-  .exec{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px;align-items:start}
-  @media(max-width:720px){.exec{grid-template-columns:1fr}}
-
   .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}
   .panel-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.8px;
     color:var(--muted);padding:13px 16px 10px;border-bottom:1px solid var(--panel-2)}
@@ -53,24 +50,6 @@
   table.stats .sub{display:block;font-family:var(--sans);font-size:10px;color:var(--faint);font-weight:400;letter-spacing:0;margin-top:1px}
   table.stats tr:hover{background:var(--panel-2)}
   .up{color:var(--accent)} .down{color:var(--red)} .flat{color:var(--muted)}
-
-  .topnews{padding:4px 14px 10px}
-  .news-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--panel-2)}
-  .news-item:last-child{border-bottom:none}
-  .ntype{flex-shrink:0;font-family:var(--mono);font-size:9px;padding:3px 7px;border-radius:5px;
-    text-transform:uppercase;letter-spacing:.3px;height:fit-content;font-weight:600}
-  .nt-earn{background:rgba(57,217,138,.15);color:var(--accent)}
-  .nt-guide{background:rgba(88,166,255,.15);color:var(--blue)}
-  .nt-ma{background:rgba(163,113,247,.15);color:var(--violet)}
-  .nt-prod{background:rgba(255,180,84,.15);color:var(--amber)}
-  .nt-mgmt{background:rgba(139,152,168,.15);color:var(--muted)}
-  .nt-reg{background:rgba(255,107,107,.15);color:var(--red)}
-  .nt-rating{background:rgba(88,166,255,.12);color:var(--blue)}
-  .nt-macro{background:var(--chip);color:var(--muted)}
-  .news-body{flex:1}
-  .news-txt{font-size:12.5px;line-height:1.4}.news-txt b{color:#fff}
-  .news-meta{font-family:var(--mono);font-size:9.5px;color:var(--faint);margin-top:3px}
-  .no-news{font-size:12px;color:var(--faint);font-style:italic;padding:10px 0}
 
   footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);
     font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center;line-height:1.8}
@@ -112,30 +91,22 @@
   </table>
 </div>
 
-<!-- WATCHLIST (izq) + TOP 3 NOTICIAS (der) -->
-<div class="exec">
-  <div class="panel-box" style="margin-bottom:0">
-    <div class="panel-h">Watchlist &middot; de un vistazo</div>
-    <table class="stats">
-      <thead>
-        <tr><th>Ticker</th><th>Precio</th><th>Dia %</th><th>Market cap</th></tr>
-      </thead>
-      <tbody>
-        {{TABLA_WATCHLIST}}
-      </tbody>
-    </table>
-  </div>
-  <div class="panel-box" style="margin-bottom:0">
-    <div class="panel-h">Top 3 noticias</div>
-    <div class="topnews">
-      {{NOTICIAS_TOP}}
-    </div>
-  </div>
+<!-- WATCHLIST a ancho completo -->
+<div class="panel-box">
+  <div class="panel-h">Watchlist &middot; de un vistazo</div>
+  <table class="stats">
+    <thead>
+      <tr><th>Ticker</th><th>Precio</th><th>Dia %</th><th>Market cap</th></tr>
+    </thead>
+    <tbody>
+      {{TABLA_WATCHLIST}}
+    </tbody>
+  </table>
 </div>
 
 <footer>
   Acciones: Finnhub &middot; cierre mas reciente.<br>
-  Indices y noticias: via web &middot; pueden tener leve delay.<br>
+  Indices: via web &middot; pueden tener leve delay.<br>
   Proyecto personal. No es recomendacion financiera.
 </footer>
 
