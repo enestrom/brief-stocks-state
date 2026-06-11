@@ -8,6 +8,7 @@
     { "symbol": "ARM",  "name": "Arm Holdings",        "tema": "Semis - diseño/IP" },
     { "symbol": "ANET", "name": "Arista Networks",     "tema": "Datacenter - networking" },
     { "symbol": "NVDA", "name": "NVIDIA",              "tema": "Chips" },
-    { "symbol": "LRCX", "name": "Lam Research",        "tema": "Semis" }
+    { "symbol": "LRCX", "name": "Lam Research",        "tema": "Semis" },
+    { "symbol": "MU", "name": "Micron Technology",     "tema": "Chips" }
   ]
 }
