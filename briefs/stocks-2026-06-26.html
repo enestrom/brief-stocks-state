@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brief Stocks · 26 jun 2026</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1c232d; --line:#2a3340;
+    --ink:#e6edf3; --muted:#8b98a8; --faint:#5a6675;
+    --accent:#39d98a; --accent-dim:#1f7a52;
+    --red:#ff6b6b; --amber:#ffb454; --blue:#58a6ff; --violet:#a371f7;
+    --chip:#222c38;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.5;padding:16px;max-width:860px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  header{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}
+  h1{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  h1 .z{color:var(--accent)}
+  .date{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:15px 18px;margin-bottom:16px}
+  .summary-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .summary-h::before{content:"";width:3px;height:11px;border-radius:2px}
+  .sum-mkt .summary-h{color:var(--blue)} .sum-mkt .summary-h::before{background:var(--blue)}
+  .sum-wl .summary-h{color:var(--accent)} .sum-wl .summary-h::before{background:var(--accent)}
+  .summary ul{list-style:none}
+  .summary li{font-size:13.5px;padding:6px 0 6px 18px;position:relative;border-bottom:1px solid var(--panel-2)}
+  .summary li:last-child{border-bottom:none}
+  .summary li::before{content:"\25B8";position:absolute;left:0;font-size:11px;top:7px;color:var(--faint)}
+  .summary li b{color:#fff}
+
+  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}
+  .panel-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+    color:var(--muted);padding:13px 16px 10px;border-bottom:1px solid var(--panel-2)}
+
+  table.stats{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.stats th{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--faint);text-align:right;padding:9px 14px 7px;font-weight:500;border-bottom:1px solid var(--panel-2)}
+  table.stats th:first-child{text-align:left}
+  table.stats td{font-family:var(--mono);font-size:12.5px;padding:10px 14px;border-bottom:1px solid var(--panel-2);text-align:right}
+  table.stats tr:last-child td{border-bottom:none}
+  table.stats td:first-child{text-align:left;font-weight:700;font-size:13px;letter-spacing:-.3px}
+  table.stats .sub{display:block;font-family:var(--sans);font-size:10px;color:var(--faint);font-weight:400;letter-spacing:0;margin-top:1px}
+  table.stats tr:hover{background:var(--panel-2)}
+  .up{color:var(--accent)} .down{color:var(--red)} .flat{color:var(--muted)}
+
+  footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Brief <span class="z">Stocks</span></h1>
+  <span class="date">26 jun 2026 &middot; 09:00 ART</span>
+</header>
+
+<div class="summary sum-mkt">
+  <div class="summary-h">Lo importante del mercado hoy</div>
+  <ul>
+    <li>La <b>Fed</b> mantiene tasas en 3,50–3,75%; el nuevo chair <b>Kevin Warsh</b> adopta postura data-dependent y el mercado ya no descuenta ningún recorte en 2026 según CME FedWatch.</li>
+    <li>Sell-off global en <b>tecnología</b>: el Nasdaq acumula cuatro ruedas de bajas consecutivas —su peor racha desde febrero— con rotación hacia industriales, salud y financieras que llevaron al Dow a máximo histórico intraday.</li>
+    <li>El <b>petróleo</b> (Brent) cayó a US$73,74 tras avances en negociaciones <b>EE.UU.–Irán</b>; el alivio en yields del Tesoro (10Y por debajo de 4,5%) ofrece algo de respiro al mercado de renta fija.</li>
+  </ul>
+</div>
+
+<div class="summary sum-wl">
+  <div class="summary-h">Lo importante de tu watchlist hoy</div>
+  <ul>
+    <li><b>MU</b> reportó un trimestre histórico: revenue de US$41,5B (+300% YoY) y EPS ajustado de US$25,11 vs. consenso de US$20,78; guía al próximo trimestre de ~US$50B. La acción sube +15,7% en la jornada.</li>
+    <li><b>AMAT</b> y <b>LRCX</b> lideran el rally de equipamiento (+13,4% y +7,2% respectivamente): el print de Micron disparó una revaluación del sector; BofA elevó el target de LRCX a US$480 desde US$330.</li>
+    <li><b>ASML</b> sube +4,4% arrastrada por el mismo catalizador; reporta el <b>15 de julio</b> — el foco estará en órdenes de China bajo la amenaza del MATCH Act y en la demanda de sistemas EUV para 2027.</li>
+    <li><b>ARM</b> y <b>NVDA</b> ceden (-3,2% y -1,6%) en la rotación fuera de nombres de alta valuación de IA, pese al contexto sectorial positivo. <b>TSM</b> también retrocede -1,3% tras su foro tecnológico en Shanghai.</li>
+  </ul>
+</div>
+
+<div class="panel-box">
+  <div class="panel-h">Indices &middot; de un vistazo</div>
+  <table class="stats">
+    <thead>
+      <tr><th>Indice</th><th>Nivel</th><th>Dia %</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>S&amp;P 500</td><td>7.357,49</td><td class="flat">-0,01%</td></tr>
+      <tr><td>Nasdaq</td><td>25.358,60</td><td class="down">-0,46%</td></tr>
+      <tr><td>Nikkei 225<span class="sub">Japón</span></td><td>69.360,88</td><td class="down">-4,15%</td></tr>
+      <tr><td>Hang Seng<span class="sub">Hong Kong</span></td><td>22.671,86</td><td class="down">-1,76%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="panel-box">
+  <div class="panel-h">Watchlist &middot; de un vistazo</div>
+  <table class="stats">
+    <thead>
+      <tr><th>Ticker</th><th>Precio</th><th>Dia %</th><th>Market cap</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ASML</td><td>€1.841,18</td><td class="up">+4,45%</td><td>€593,5B</td></tr>
+      <tr><td>AMAT</td><td>$668,00</td><td class="up">+13,42%</td><td>$530,4B</td></tr>
+      <tr><td>TSM</td><td>TWD 434,99</td><td class="down">-1,32%</td><td>TWD 61,98T</td></tr>
+      <tr><td>INTC</td><td>$132,87</td><td class="up">+0,93%</td><td>$667,8B</td></tr>
+      <tr><td>ARM</td><td>$347,71</td><td class="down">-3,17%</td><td>$382,1B</td></tr>
+      <tr><td>ANET</td><td>$165,45</td><td class="up">+2,29%</td><td>$208,3B</td></tr>
+      <tr><td>NVDA</td><td>$195,74</td><td class="down">-1,64%</td><td>$4,74T</td></tr>
+      <tr><td>LRCX</td><td>$401,82</td><td class="up">+7,21%</td><td>$502,5B</td></tr>
+      <tr><td>MU</td><td>$1.213,56</td><td class="up">+15,74%</td><td>$1,37T</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  Acciones: Finnhub &middot; cierre mas reciente.<br>
+  Indices: via web &middot; pueden tener leve delay.<br>
+  Proyecto personal. No es recomendacion financiera.
+</footer>
+
+</body>
+</html>
