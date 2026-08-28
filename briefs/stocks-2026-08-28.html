@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brief Stocks · 28 ago 2026</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel-2:#1c232d; --line:#2a3340;
+    --ink:#e6edf3; --muted:#8b98a8; --faint:#5a6675;
+    --accent:#39d98a; --accent-dim:#1f7a52;
+    --red:#ff6b6b; --amber:#ffb454; --blue:#58a6ff; --violet:#a371f7;
+    --chip:#222c38;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.5;padding:16px;max-width:860px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  header{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}
+  h1{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  h1 .z{color:var(--accent)}
+  .date{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  .summary{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:15px 18px;margin-bottom:16px}
+  .summary-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;
+    letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .summary-h::before{content:"";width:3px;height:11px;border-radius:2px}
+  .sum-mkt .summary-h{color:var(--blue)} .sum-mkt .summary-h::before{background:var(--blue)}
+  .sum-wl .summary-h{color:var(--accent)} .sum-wl .summary-h::before{background:var(--accent)}
+  .summary ul{list-style:none}
+  .summary li{font-size:13.5px;padding:6px 0 6px 18px;position:relative;border-bottom:1px solid var(--panel-2)}
+  .summary li:last-child{border-bottom:none}
+  .summary li::before{content:"\25B8";position:absolute;left:0;font-size:11px;top:7px;color:var(--faint)}
+  .summary li b{color:#fff}
+
+  .panel-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}
+  .panel-h{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.8px;
+    color:var(--muted);padding:13px 16px 10px;border-bottom:1px solid var(--panel-2)}
+
+  table.stats{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  table.stats th{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--faint);text-align:right;padding:9px 14px 7px;font-weight:500;border-bottom:1px solid var(--panel-2)}
+  table.stats th:first-child{text-align:left}
+  table.stats td{font-family:var(--mono);font-size:12.5px;padding:10px 14px;border-bottom:1px solid var(--panel-2);text-align:right}
+  table.stats tr:last-child td{border-bottom:none}
+  table.stats td:first-child{text-align:left;font-weight:700;font-size:13px;letter-spacing:-.3px}
+  table.stats .sub{display:block;font-family:var(--sans);font-size:10px;color:var(--faint);font-weight:400;letter-spacing:0;margin-top:1px}
+  table.stats tr:hover{background:var(--panel-2)}
+  .up{color:var(--accent)} .down{color:var(--red)} .flat{color:var(--muted)}
+
+  footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Brief <span class="z">Stocks</span></h1>
+  <span class="date">28 ago 2026 &middot; 09:00</span>
+</header>
+
+<div class="summary sum-mkt">
+  <div class="summary-h">Lo importante del mercado hoy</div>
+  <ul>
+    <li><b>NVDA</b> batió estimados en Q2 con ingresos récord impulsados por data center; el sector semis lideró el rally del <b>S&P 500 (+0,7%)</b> y el <b>Nasdaq (+1,4%)</b> del jueves, aunque futuros ceden leve terreno esta mañana.</li>
+    <li>Toda la atención macro en el discurso de <b>Fed Chair Kevin Warsh</b> en <b>Jackson Hole</b> hoy: el mercado busca señales sobre el ritmo de recortes; MUFG empuja su expectativa de easing a <b>2027</b> ante datos laborales flojos y core CPI rebotando.</li>
+    <li><b>Petróleo</b> extiende caída — WTI cerca de $82 — tras sanciones más duras sobre Irán; el alivio en precios de energía reduce presión inflacionaria y aleja el riesgo de una suba de tasas en septiembre.</li>
+  </ul>
+</div>
+
+<div class="summary sum-wl">
+  <div class="summary-h">Lo importante de tu watchlist hoy</div>
+  <ul>
+    <li><b>NVDA</b> sube ~+8,7% tras earnings beat: Jensen Huang confirmó que la demanda supera la oferta y guió crecimiento sostenido en el ecosistema IA; China ausente de la guía forward por restricciones de exportación.</li>
+    <li><b>INTC</b> sube +4,4% arrastrado por el entusiasmo post-NVDA y rotación sectorial en semis; recupera terreno tras meses de bajo rendimiento relativo.</li>
+    <li><b>TSM</b> avanza +2,3% junto al rally del sector; como principal fundición de NVDA y ARM se beneficia directamente del optimismo en demanda de chips de IA.</li>
+    <li><b>ASML</b> cede -0,6%: pese al viento de cola sectorial, la presión de China —donde un fabricante estatal avanza en equipos de litografía alternativos— limita el upside del proveedor europeo de EUV.</li>
+  </ul>
+</div>
+
+<div class="panel-box">
+  <div class="panel-h">Indices &middot; de un vistazo</div>
+  <table class="stats">
+    <thead>
+      <tr><th>Indice</th><th>Nivel</th><th>Dia %</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>S&amp;P 500</td><td>7.731</td><td class="up">+0,7%</td></tr>
+      <tr><td>Nasdaq</td><td>26.541</td><td class="up">+1,6%</td></tr>
+      <tr><td>Nikkei 225<span class="sub">Japón</span></td><td>66.262</td><td class="up">+0,6%</td></tr>
+      <tr><td>Hang Seng<span class="sub">Hong Kong</span></td><td>25.566</td><td class="down">-0,3%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="panel-box">
+  <div class="panel-h">Watchlist &middot; de un vistazo</div>
+  <table class="stats">
+    <thead>
+      <tr><th>Ticker</th><th>Precio</th><th>Dia %</th><th>Market cap</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>ASML</td><td>€1.735,01</td><td class="down">-0,6%</td><td>$572,1B</td></tr>
+      <tr><td>AMAT</td><td>$482,36</td><td class="up">+0,5%</td><td>$382,8B</td></tr>
+      <tr><td>TSM</td><td>NT$427,30</td><td class="up">+2,3%</td><td>NT$62,6T</td></tr>
+      <tr><td>INTC</td><td>$92,09</td><td class="up">+4,4%</td><td>$483,9B</td></tr>
+      <tr><td>ARM</td><td>$255,21</td><td class="up">+1,7%</td><td>$268,1B</td></tr>
+      <tr><td>ANET</td><td>$201,09</td><td class="down">-0,6%</td><td>$253,6B</td></tr>
+      <tr><td>NVDA</td><td>$227,98</td><td class="up">+8,7%</td><td>$5,5T</td></tr>
+      <tr><td>LRCX</td><td>$318,58</td><td class="up">+1,8%</td><td>$398,6B</td></tr>
+      <tr><td>MU</td><td>$935,39</td><td class="down">-0,3%</td><td>$1,1T</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  Acciones: Finnhub &middot; cierre mas reciente.<br>
+  Indices: via web &middot; pueden tener leve delay.<br>
+  Proyecto personal. No es recomendacion financiera.
+</footer>
+
+</body>
+</html>
